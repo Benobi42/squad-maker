@@ -26,6 +26,9 @@ input[type="number"]{
     background-color: steelblue;
     border-radius: 4px;
 }
+.playerRow:nth-child(even) {
+    background-color: slategray
+}
 .text{
     font-family: Arial, Helvetica, sans-serif;
 }
