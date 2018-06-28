@@ -1,8 +1,19 @@
 # Squad Maker Challenge
 
+## Testing
+
+Unittests can be run using pytest-3 in the root or testing directories
+Style checking is done through flake8
+Currently, there is one warning with flake8 on python 3.7:
+*c:\users\bensc\appdata\local\programs\python\python37\lib\site-packages\pycodestyle.py:113: FutureWarning: Possible nested set at position 1 EXTRANEOUS_WHITESPACE_REGEX = re.compile(r'[[({] | []}),;:]')
+This can be safely ignored when checking style.
+
+## Original README
+
 The challenge is to build an application that creates equally matched hockey squads from a collection of players. 
 
-Craft a solution that: 
+Craft a solution that:
+
 * you would consider to be representative of your level of professionalism
 * you would be comfortable handing off to someone else to maintain
 * uses a technology that you are comfortable with
@@ -23,7 +34,7 @@ The organizer has tasked you with creating the squads for the tournament. You ar
   * Any players that cannot be assigned to a squad will be placed on a waiting list (ex. if there are 40 players and the organizer wants 6 squads, there will be 4 players on the waiting list)
 * Each squad must closely balance in each of the three skills
 
-### Player Data
+#### Player Data
 
 The player data will be made availabe via a REST API from the registration team. Unfortunately, their API is not yet availabe. For now, the registration team has offered you sample player data in the [players.json](./players.json) file. The format of the data in the file will match the format of the REST response when it is available, at which point you will need to be able to quickly integrate it.
 
@@ -31,7 +42,7 @@ To generate additional random data for the JSON reponse, use the content from th
 
 You can change the value in `repeat(40)` to generate data for any number of players.
 
-### UI Features
+#### UI Features
 
 You have decided to build a small web application for this task. The organizer likes this approach and you discuss the following features:
 
@@ -58,7 +69,7 @@ You have decided to build a small web application for this task. The organizer l
 
 The organizer has left the look and feel of the application and the technologies to use in your capable hands.
 
-## Example Output
+### Example Output
 
 The API returns the following player data, which is then displayed on the home page.
 
@@ -98,11 +109,11 @@ The user selects 2 squads and clicks the button to generate the squads. The foll
 | Jennifer Wu |   94    |    55    |   100    |
 | **Average** |   77    |    70    |    60    |
 
-## Submission
+### Submission
 
 Submissions are to be made via a public github repo (or similar service). Please include proof that demonstrates how the program works. A publicly accessible deployed application would be awesome, though not required.
 
-## Final Thoughts
+### Final Thoughts
 
 _We are not specifically looking to see if you are able to write an algorithm to find the most optimal solution. We are looking for a thoughtful approach at solving the problem and that you write a reasonable algorithm that implements the approach._
 
