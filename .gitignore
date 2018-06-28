@@ -1,0 +1,5 @@
+.pylintrc
+*.pyc
+test/.pytest_cache/*
+.pytest_cache/*
+
