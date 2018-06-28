@@ -1,0 +1,6 @@
+.vscode/settings.json
+.pylintrc
+__pycache__/players.cpython-37.pyc
+__pycache__/squads.cpython-37.pyc
+templates/squad1.html
+templates/waitList.html
