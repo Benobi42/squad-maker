@@ -19,12 +19,21 @@
             <b style="font-size:20px;">Number of Squads:</b>
             <input type="number" name=numSquads onfocus="this.value=''"
              oninvalid="alert('Number of Squads must be greater than zero and lower than the number of available players')"
-             value=1 min=1/>
+             value=1 min=1 max= {{ numPlayers }} />
             <button class=button type="submit"><b>Generate Squads</b></button>
         </form>
         <div class=text>The number of desired squads must be lower than the number of available players</div>
+        <div class=numText><b>{{ numPlayers }} Players Currently Available</b></div>
         <form class=text action = "/", method="GET">
             <button class=button type="submit"><b>Reset Squads</b></button>
         </form>
+        <div>
+            {% if waitingList %}
+                <div class=waitListText><b>Waiting List</b></div>
+                <div class=text>{{ waitingList|safe }}</div>
+            {% else %}
+                <div class=text><b>No Waiting List Found</b></div>
+            {% endif %}
+            </div>
     </body>
 </html>
