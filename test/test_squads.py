@@ -3,7 +3,7 @@ import squads
 
 from unittest import TestCase
 
-from players import Player, Skill
+from players import Player, PlayerList, Skill
 
 
 class TestSquad(TestCase):
@@ -236,3 +236,236 @@ class TestSquad(TestCase):
                         '<td>82</td><td>82</td></tr>\n</tbody>\n</table>')
 
         self.assertEqual(squad.toHTML(), expectedHTML)
+
+
+class TestGetBalancedSquads(TestCase):
+    """Tests for getting balanced squads."""
+
+    skills1 = {Skill.Skating: 99, Skill.Shooting: 99,
+               Skill.Checking: 99}
+    skills2 = {Skill.Skating: 97, Skill.Shooting: 97,
+               Skill.Checking: 97}
+    skills3 = {Skill.Skating: 50, Skill.Shooting: 50,
+               Skill.Checking: 50}
+    skills4 = {Skill.Skating: 20, Skill.Shooting: 20,
+               Skill.Checking: 20}
+    player1 = Player("99", "Wayne Gretzky", skills1)
+    player2 = Player("97", "Connor McDavid", skills2)
+    player3 = Player("123", "Ben Schreiber", skills3)
+    player4 = Player("404", "Nota RealPlayer", skills4)
+
+    def testGetBalancedSquads(self):
+        """Test getting a balanced set of squads."""
+        numSquads = 2
+        playerList = PlayerList([self.player1,
+                                 self.player2,
+                                 self.player3,
+                                 self.player4])
+
+        expectedSquads = [squads.Squad(2, [self.player2, self.player3]),
+                          squads.Squad(1, [self.player1, self.player4])]
+
+        balSquads = squads.getBalancedSquads(numSquads, playerList)
+
+        self.assertEqual(balSquads, expectedSquads)
+
+    def testGetBalancedSquads__SkillBalance(self):
+        """
+        Test that squads get the correct player to balance skills.
+
+        The first two players in each squad will be assigned based
+        on the Skating skill and the next two players will be sorted
+        based on the Shooting skill.
+        """
+        numSquads = 2
+        playerList = PlayerList([self.player1,
+                                 self.player2,
+                                 self.player3,
+                                 self.player4])
+
+        expectedSquads = [squads.Squad(2, [self.player2, self.player3]),
+                          squads.Squad(1, [self.player1, self.player4])]
+
+        balSquads = squads.getBalancedSquads(numSquads, playerList)
+
+        self.assertEqual(balSquads, expectedSquads)
+
+    def testGetBalancedSquads__oddNumPlayers(self):
+        """
+        Test getting a balanced set of squads with an odd number of players.
+
+        Verify that the remaining player remains on the given list of players.
+        """
+        numSquads = 2
+        playerList = PlayerList([self.player1,
+                                 self.player2,
+                                 self.player3])
+
+        expectedSquads = [squads.Squad(1, [self.player1]),
+                          squads.Squad(2, [self.player2])]
+
+        balSquads = squads.getBalancedSquads(numSquads, playerList)
+
+        self.assertEqual(balSquads, expectedSquads)
+        self.assertEqual(playerList.players, [self.player3])
+
+    def testGetBalancedSquads__OneSquad(self):
+        """Test putting all players on one squad."""
+        numSquads = 1
+        playerList = PlayerList([self.player1,
+                                 self.player2,
+                                 self.player3,
+                                 self.player4])
+
+        expectedSquads = [squads.Squad(1, playerList.players)]
+
+        balSquads = squads.getBalancedSquads(numSquads, playerList)
+        self.assertEqual(balSquads, expectedSquads)
+        self.assertEqual(playerList.players, [])
+
+    def testGetBalancedSquads__NSquads(self):
+        """Test getting a number of squads equal to the number of players."""
+        numSquads = 4
+        playerList = PlayerList([self.player1,
+                                 self.player2,
+                                 self.player3,
+                                 self.player4])
+
+        expectedSquads = [squads.Squad(1, [self.player4]),
+                          squads.Squad(2, [self.player3]),
+                          squads.Squad(3, [self.player2]),
+                          squads.Squad(4, [self.player1])]
+
+        balSquads = squads.getBalancedSquads(numSquads, playerList)
+
+        self.assertEqual(balSquads, expectedSquads)
+        self.assertEqual(playerList.players, [])
+
+    def testGetBalancedSquadsRaisesValueError__GreaterThanNSquads(self):
+        """Test balancing errors when getting more squads than players."""
+        numSquads = 5
+        playerList = PlayerList([self.player1,
+                                 self.player2,
+                                 self.player3,
+                                 self.player4])
+
+        with self.assertRaises(ValueError):
+            squads.getBalancedSquads(numSquads, playerList)
+
+    def testGetBalancedSquadsRaisesValueError__ZeroSquads(self):
+        """Test balancing errors when getting zero squads."""
+        numSquads = 0
+        playerList = PlayerList([self.player1,
+                                 self.player2,
+                                 self.player3,
+                                 self.player4])
+
+        with self.assertRaises(ValueError):
+            squads.getBalancedSquads(numSquads, playerList)
+
+    def testGetBalancedSquadsRaisesValueError__NegSquads(self):
+        """Test balancing errors when getting negative squads."""
+        numSquads = -1
+        playerList = PlayerList([self.player1,
+                                 self.player2,
+                                 self.player3,
+                                 self.player4])
+
+        with self.assertRaises(ValueError):
+            squads.getBalancedSquads(numSquads, playerList)
+
+
+class TestGetSquadWithLowestSkill(TestCase):
+    """Tests for getting the squad with the lowest average skill."""
+
+    def testGetSquadWithLowestSkill(self):
+        """Test getting the squad with the lowest average skill."""
+        skills1 = {Skill.Skating: 99, Skill.Shooting: 98,
+                   Skill.Checking: 97}
+        skills2 = {Skill.Skating: 97, Skill.Shooting: 99,
+                   Skill.Checking: 95}
+        skills3 = {Skill.Skating: 50, Skill.Shooting: 50,
+                   Skill.Checking: 50}
+        skills4 = {Skill.Skating: 20, Skill.Shooting: 60,
+                   Skill.Checking: 20}
+        player1 = Player("99", "Wayne Gretzky", skills1)
+        player2 = Player("97", "Connor McDavid", skills2)
+        player3 = Player("123", "Ben Schreiber", skills3)
+        player4 = Player("404", "Nota RealPlayer", skills4)
+
+        mySquads = [squads.Squad(1, [player1, player2]),
+                    squads.Squad(2, [player3, player4])]
+
+        expectedSquad = mySquads[1]
+        expected = (1, Skill.Skating, expectedSquad.skating)
+        self.assertEqual(squads.getSquadWithLowestSkill(mySquads),
+                         expected)
+
+    def testGetSquadWithLowestSkillSkating(self):
+        """Test getting the squad with the lowest average skating skill."""
+        skills1 = {Skill.Skating: 99, Skill.Shooting: 99,
+                   Skill.Checking: 99}
+        skills2 = {Skill.Skating: 97, Skill.Shooting: 99,
+                   Skill.Checking: 99}
+        skills3 = {Skill.Skating: 50, Skill.Shooting: 99,
+                   Skill.Checking: 99}
+        skills4 = {Skill.Skating: 20, Skill.Shooting: 99,
+                   Skill.Checking: 99}
+        player1 = Player("99", "Wayne Gretzky", skills1)
+        player2 = Player("97", "Connor McDavid", skills2)
+        player3 = Player("123", "Ben Schreiber", skills3)
+        player4 = Player("404", "Nota RealPlayer", skills4)
+
+        mySquads = [squads.Squad(1, [player1, player2]),
+                    squads.Squad(2, [player3, player4])]
+
+        expectedSquad = mySquads[1]
+        expected = (1, Skill.Skating, expectedSquad.skating)
+        self.assertEqual(squads.getSquadWithLowestSkill(mySquads),
+                         expected)
+
+    def testGetSquadWithLowestSkillShooting(self):
+        """Test getting the squad with the lowest average shooting skill."""
+        skills1 = {Skill.Skating: 99, Skill.Shooting: 99,
+                   Skill.Checking: 99}
+        skills2 = {Skill.Skating: 99, Skill.Shooting: 97,
+                   Skill.Checking: 99}
+        skills3 = {Skill.Skating: 99, Skill.Shooting: 50,
+                   Skill.Checking: 99}
+        skills4 = {Skill.Skating: 99, Skill.Shooting: 20,
+                   Skill.Checking: 99}
+        player1 = Player("99", "Wayne Gretzky", skills1)
+        player2 = Player("97", "Connor McDavid", skills2)
+        player3 = Player("123", "Ben Schreiber", skills3)
+        player4 = Player("404", "Nota RealPlayer", skills4)
+
+        mySquads = [squads.Squad(1, [player1, player2]),
+                    squads.Squad(2, [player3, player4])]
+
+        expectedSquad = mySquads[1]
+        expected = (1, Skill.Shooting, expectedSquad.shooting)
+        self.assertEqual(squads.getSquadWithLowestSkill(mySquads),
+                         expected)
+
+    def testGetSquadWithLowestSkillChecking(self):
+        """Test getting the squad with the lowest average checking skill."""
+        skills1 = {Skill.Skating: 99, Skill.Shooting: 99,
+                   Skill.Checking: 99}
+        skills2 = {Skill.Skating: 99, Skill.Shooting: 99,
+                   Skill.Checking: 97}
+        skills3 = {Skill.Skating: 99, Skill.Shooting: 99,
+                   Skill.Checking: 50}
+        skills4 = {Skill.Skating: 99, Skill.Shooting: 99,
+                   Skill.Checking: 20}
+        player1 = Player("99", "Wayne Gretzky", skills1)
+        player2 = Player("97", "Connor McDavid", skills2)
+        player3 = Player("123", "Ben Schreiber", skills3)
+        player4 = Player("404", "Nota RealPlayer", skills4)
+
+        mySquads = [squads.Squad(1, [player1, player2]),
+                    squads.Squad(2, [player3, player4])]
+
+        expectedSquad = mySquads[1]
+        expected = (1, Skill.Checking, expectedSquad.checking)
+        self.assertEqual(squads.getSquadWithLowestSkill(mySquads),
+                         expected)

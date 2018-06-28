@@ -99,3 +99,92 @@ class SquadTable(PlayerTable):
             return {"class": "avgRow"}
         else:
             return {"class": "playerRow"}
+
+
+def getBalancedSquads(numSquads, playerList):
+    """
+    Dynamically generate closely-balanced squads of players from a given list.
+
+    The list of players is sorted on each of the three rankings into a separate
+    list. During each iteration of the assignment loop, the current squad is
+    the one with the lowest summation of one of the skills, and the available
+    player with the highest skill in that category is added to the squad. Once
+    a squad has the maximum number of players needed to get the desired number
+    of squads from the player list, then no more players can be added.
+
+    Errors if the number of desired squads is greater than the number of
+    available players, or if number of desired squads is less than one.
+
+    Special Cases:
+        1 squad:    When only one squad is needed, all players are moved from
+                    the waiting list into the squad.
+
+        numPlayers squads:  When the number of players is equal to the number
+                            of desired squads, each player is placed onto their
+                            own squad, bypassing the need for calculations
+
+    FUTURE OPTIMIZATION: Once a roughly balanced team is generated, go through
+    and attempt to balance further by swapping players between teams
+    """
+    squads = []
+    numPlayers = len(playerList.players)
+    if(numSquads > numPlayers):
+        raise ValueError(("Number of Squads cannot be greater then number of "
+                          "players. %d squads attempted, %d players available."
+                          % (numSquads, numPlayers)))
+    elif(numSquads < 1):
+        raise ValueError(("Number of Squads must be greater than one,"
+                          "%d given" % numSquads))
+    elif(numSquads == 1):
+        newSquad = Squad(1, playerList.players)
+        squads.append(newSquad)
+        playerList.players = []
+    elif(numSquads == numPlayers):
+        for i in range(numPlayers):
+            newSquad = Squad(i+1, [playerList.players.pop()])
+            squads.append(newSquad)
+    else:
+        squadSize = numPlayers//numSquads
+        workingSquads = [Squad(i+1, []) for i in range(numSquads)]
+
+        sortedPlayers = {Skill.Skating: playerList.sortedPlayers(Skill.Skating),
+                         Skill.Shooting: playerList.sortedPlayers(Skill.Shooting),
+                         Skill.Checking: playerList.sortedPlayers(Skill.Checking)}
+
+        while(workingSquads):
+            currentSquadIndex, currentSkill, _ = getSquadWithLowestSkill(workingSquads)
+            pick = sortedPlayers[currentSkill].pop()
+            for sortedList in sortedPlayers.values():
+                if pick in sortedList:
+                    sortedList.remove(pick)
+
+            playerList.players.remove(pick)
+            workingSquads[currentSquadIndex].players.append(pick)
+            if(len(workingSquads[currentSquadIndex].players) == squadSize):
+                squads.append(workingSquads.pop(currentSquadIndex))
+
+    return squads
+
+
+def getSquadWithLowestSkill(squads):
+    """
+    Determine the squad with lowest total skill.
+
+    The squad with the lowest total of each skill is found, and the current
+    squad is determined by whichever of these totals is currently the lowest.
+    When found, return the index of the current squad as well as whichever
+    skill is currently the lowest.
+    """
+    minskating = min(range(len(squads)),
+                   key=lambda index: squads[index].skating)
+    minShoot = min(range(len(squads)),
+                   key=lambda index: squads[index].shooting)
+    minCheck = min(range(len(squads)),
+                   key=lambda index: squads[index].checking)
+    return min([(minskating, Skill.Skating,
+                 squads[minskating].skating),
+                (minShoot, Skill.Shooting,
+                 squads[minShoot].shooting),
+                (minCheck, Skill.Checking,
+                 squads[minCheck].checking)],
+               key=lambda x: x[2])
