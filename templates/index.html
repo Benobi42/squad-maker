@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+ 
+    <head>
+        <title>Hockey Squad Builder</title>
+        <link rel="stylesheet" type="text/css" href="../static/style.css">
+    </head>
+ 
+    <body>
+        <div class=titleText><b>Hockey Squad Builder</b></div>
+        <div class=text>Generate a set of squads from a list of available players.</div><br>
+        <div class=text>
+            Instructions<br>
+            Enter the number of desired squads below, and click the Generate Squads Button<br>
+            To clear the current list of squads, press Reset Squads.
+        </div><br>
+
+        <form class=text>
+            <b style="font-size:20px;">Number of Squads:</b>
+            <input type="number" name=numSquads onfocus="this.value=''"
+             oninvalid="alert('Number of Squads must be greater than zero and lower than the number of available players')"
+             value=1 min=1/>
+            <button class=button type="submit"><b>Generate Squads</b></button>
+        </form>
+        <div class=text>The number of desired squads must be lower than the number of available players</div>
+        <form class=text>
+            <button class=button type="submit"><b>Reset Squads</b></button>
+        </form>
+    </body>
+</html>
