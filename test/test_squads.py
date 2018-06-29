@@ -107,6 +107,22 @@ class testTournamentRank(TestCase):
         tournament = squads.tournamentRank(players)
         self.assertEqual(tournament, expectedTournament)
 
+    def testTournamentRankSortsByHighSkill(self):
+        """
+        Test that the tournament ranker sorts the given players by their
+        highest skill
+
+        Since the skill of 100 is greater than 99, player 1 is now
+        considered the "highest ranked" player when generating the tournament
+        """
+        player1 = Player("123", "Ben Schreiber", 51, 51, 100)
+        player2 = Player("99", "Wayne Gretzky", 99, 99, 99)
+
+        players = [player1, player2]
+        expectedTournament = [player2, player1]
+        tournament = squads.tournamentRank(players)
+        self.assertEqual(tournament, expectedTournament)
+
 
 class TestGetBalancedSquads(TestCase):
 

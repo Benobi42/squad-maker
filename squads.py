@@ -71,8 +71,8 @@ def tournamentRank(players):
     """
     Rank the players as if they were in a single elimintion tournament
 
-    This ranking is accomplished by sorting the players by the sum
-    of their three skills. The rankings are converted into their
+    This ranking is accomplished by sorting the players by the maximum
+    value of their skills. The rankings are converted into their
     binary representation with the same number of bits as the total
     number of player, left padded with zeros, whjch are then reversed
     to generate their 'slot' in the tournament. Due to the nature of
@@ -82,7 +82,7 @@ def tournamentRank(players):
     """
     tournament = []
     sortedPlayers = sorted(players, reverse=True,
-                           key=(lambda x: x.skate+x.shoot+x.check))
+                           key=(lambda x: max([x.skate, x.shoot, x.check])))
 
     tournamentPlayers = []
     for i, player in enumerate(sortedPlayers):
@@ -119,7 +119,6 @@ def getBalancedSquads(numSquads, playerList):
                             of desired squads, each player is placed onto their
                             own squad, bypassing the need for calculations
 
-    TODO: Rank separately for each of the skills rather than using the sum.
     FUTURE OPTIMIZATION: Once a roughly balanced team is generated, go through
     and attempt to balance further by swapping players between teams
     """
