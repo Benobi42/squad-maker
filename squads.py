@@ -20,6 +20,7 @@ class Squad(PlayerList):
         """
         self.squadNum = squadNum
         self.players = players
+        self.updateTable()
 
     def getAveragePlayer(self):
         """
@@ -45,12 +46,13 @@ class Squad(PlayerList):
         bottom.
         """
         avgPlay = self.getAveragePlayer()
-        self.table = PlayerTable(self.players, ["playerList"])
+        self.updateTable()
         html = self.table.__html__()
 
         html = html.replace("</tbody>",
-                            ("</tbody>\n<tbody>\n<tr><td><b>%s</b></td>"
-                             "<td>%s</td><td>%s</td><td>%s</td></tr>\n</tbody>"
+                            ("</tbody>\n<tbody class=avgRow>\n<tr>"
+                             "<td><b>%s</b></td><td>%s</td><td>%s</td>"
+                             "<td>%s</td></tr>\n</tbody>"
                              % (avgPlay.name, avgPlay.skate,
                                 avgPlay.shoot, avgPlay.check)))
 

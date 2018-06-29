@@ -91,7 +91,16 @@ class PlayerList:
         Create a PlayerList and generate a HTML table for itself
         """
         self.players = players
-        self.table = PlayerTable(self.players, ["playerList"])
+        self.updateTable()
+
+    def updateTable(self):
+        emptyMsg = "No Players on Waiting List"
+        tableClasses = ["playerList"]
+        tableHTMLAttrs = {"align": "center"}
+        self.table = PlayerTable(self.players,
+                                 classes=tableClasses,
+                                 no_items=emptyMsg,
+                                 html_attrs=tableHTMLAttrs)
 
     def toHTML(self, fn=WAITLIST):
         """
@@ -100,7 +109,7 @@ class PlayerList:
 
         Defaults to printing out to the HTML file for the Waiting List
         """
-        self.table = PlayerTable(self.players, ["playerList"])
+        self.updateTable()
         html = self.table.__html__()
         writeHTMLToFile(html, fn)
 

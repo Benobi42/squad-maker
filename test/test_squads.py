@@ -23,11 +23,11 @@ class TestSquad(TestCase):
     def testToHTML(self):
         squad = squads.Squad(1, [self.player1, self.player2])
         avgPlay = squad.getAveragePlayer()
-        expectedHTML = PlayerTable(squad.players, ["playerList"]).__html__()
+        expectedHTML = squad.table.__html__()
 
         expectedHTML = expectedHTML.replace("</tbody>",
-                                            ("</tbody>\n<tbody>\n<tr>"
-                                             "<td><b>Average</b></td>"
+                                            ("</tbody>\n<tbody class=avgRow>\n"
+                                             "<tr><td><b>Average</b></td>"
                                              "<td>%s</td><td>%s</td>"
                                              "<td>%s</td></tr>\n</tbody>"
                                              % (avgPlay.skate, avgPlay.shoot,
