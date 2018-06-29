@@ -103,10 +103,10 @@ def getBalancedSquads(numSquads, playerList):
     Algorithm to balance teams is based on https://stackoverflow.com/a/1363601.
     Players are ranked by the sum of their three skills, and this ranking is
     used to generate their place in a single-elimination tournament. Once the
-    players are placed in this tournament order, each team alternates taking
-    the top and bottom players of the tournament into their team, until all
-    teams have reached the maximum number of players possible given the
-    desired number of teams. Remaining players are left on the waiting list.
+    players are placed in this tournament order, each squad, starting with the
+    first, takes the next x players, where x is the desired squad size needed
+    to generate the number of squads desired. Remaining players are left on the
+    waiting list.
 
     Errors if the number of desired squads is greater than the number of
     available players, or if number of desired squads is less than one.
@@ -146,12 +146,9 @@ def getBalancedSquads(numSquads, playerList):
         tourney = tournamentRank(playerList.players)
 
         squadPlayers = [[] for i in range(numSquads)]
-        for i in range(squadSize):
-            for squad in squadPlayers:
-                if(len(squad) % 2 == 0):
-                    pick = tourney.pop(0)
-                else:
-                    pick = tourney.pop()
+        for squad in squadPlayers:
+            for j in range(squadSize):
+                pick = tourney.pop(0)
                 squad.append(pick)
                 playerList.players.remove(pick)
 

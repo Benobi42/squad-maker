@@ -136,11 +136,10 @@ class TestGetBalancedSquads(TestCase):
         player4 = Player("404", "Nota RealPlayer", 20, 20, 20)
         playerList = PlayerList([player1, player2, player3, player4])
 
-        expectedSquads = [squads.Squad(1, [player4, player3]),
-                          squads.Squad(2, [player2, player1])]
+        expectedSquads = [squads.Squad(1, [player4, player2]),
+                          squads.Squad(2, [player1, player3])]
 
         balSquads = squads.getBalancedSquads(numSquads, playerList)
-
         self.assertEqual(balSquads, expectedSquads)
 
     @patch('players.PlayerList.toHTML', MagicMock)
