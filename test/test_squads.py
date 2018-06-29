@@ -22,18 +22,21 @@ class TestSquad(TestCase):
 
     def testToHTML(self):
         squad = squads.Squad(1, [self.player1, self.player2])
-        averagePlayer = squad.getAveragePlayer()
-        outputPlayers = squad.players
-        outputPlayers.append(averagePlayer)
-        expectedHTML = PlayerTable(outputPlayers, ["playerList"]).__html__()
-        removed = outputPlayers.pop()
-        self.assertEqual(removed, averagePlayer)
+        avgPlay = squad.getAveragePlayer()
+        expectedHTML = PlayerTable(squad.players, ["playerList"]).__html__()
+
+        expectedHTML = expectedHTML.replace("</tbody>",
+                                            ("</tbody>\n<tbody>\n<tr>"
+                                             "<td><b>Average</b></td>"
+                                             "<td>%s</td><td>%s</td>"
+                                             "<td>%s</td></tr>\n</tbody>"
+                                             % (avgPlay.skate, avgPlay.shoot,
+                                                avgPlay.check)))
 
         with patch("builtins.open", mock_open()) as mock_file:
             html = squad.toHTML()
 
         self.assertEqual(html, expectedHTML)
-        self.assertEqual(squad.players, outputPlayers)
 
 
 class TestBitReverse(TestCase):

@@ -41,12 +41,18 @@ class Squad(PlayerList):
     def toHTML(self):
         """
         Output the squad as a table to an HTML file with its corresponding
-        squad number
+        squad number, and the average of all skills on the team at the
+        bottom.
         """
-        self.players.append(self.getAveragePlayer())
+        avgPlay = self.getAveragePlayer()
         self.table = PlayerTable(self.players, ["playerList"])
         html = self.table.__html__()
-        self.players.pop()
+
+        html = html.replace("</tbody>",
+                            ("</tbody>\n<tbody>\n<tr><td><b>%s</b></td>"
+                             "<td>%s</td><td>%s</td><td>%s</td></tr>\n</tbody>"
+                             % (avgPlay.name, avgPlay.skate,
+                                avgPlay.shoot, avgPlay.check)))
 
         fn = "templates/squad%d.html" % self.squadNum
         writeHTMLToFile(html, fn)
