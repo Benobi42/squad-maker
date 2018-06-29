@@ -41,4 +41,4 @@ if __name__ == "__main__":
     to avoid old data from persisting after updating.
     """
     app.config['TEMPLATES_AUTO_RELOAD'] = True
-    app.run()
+    app.run(host="0.0.0.0")
