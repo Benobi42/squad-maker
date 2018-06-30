@@ -23,17 +23,17 @@ class Squad(PlayerList):
 
     @property
     def skating(self):
-        """get the total skating rating for the squad."""
+        """Get the total skating rating for the squad."""
         return sum([p.skating for p in self.players])
 
     @property
     def shooting(self):
-        """get the total shooting rating for the squad."""
+        """Get the total shooting rating for the squad."""
         return sum([p.shooting for p in self.players])
 
     @property
     def checking(self):
-        """get the total checking rating for the squad."""
+        """Get the total checking rating for the squad."""
         return sum([p.checking for p in self.players])
 
     @property
@@ -65,7 +65,7 @@ class Squad(PlayerList):
     def updateTable(self):
         """
         Update the table for the squad.
-        
+
         The average of the entire team is added as a separate
         table body below the body of the generated table.
         """
@@ -87,8 +87,8 @@ class Squad(PlayerList):
 
 class SquadTable(PlayerTable):
     """HTML Table for squads, with average of all skills shown."""
-    
-    def get_tr_attrs(self,item):
+
+    def get_tr_attrs(self, item):
         """
         Get the attributes for the rows in the table.
 
@@ -147,21 +147,24 @@ def getBalancedSquads(numSquads, playerList):
         squadSize = numPlayers//numSquads
         workingSquads = [Squad(i+1, []) for i in range(numSquads)]
 
-        sortedPlayers = {Skill.Skating: playerList.sortedPlayers(Skill.Skating),
-                         Skill.Shooting: playerList.sortedPlayers(Skill.Shooting),
-                         Skill.Checking: playerList.sortedPlayers(Skill.Checking)}
+        sortedBySkating = playerList.sortedPlayers(Skill.Skating)
+        sortedByShooting = playerList.sortedPlayers(Skill.Shooting)
+        sortedByChecking = playerList.sortedPlayers(Skill.Checking)
+        sortedPlayers = {Skill.Skating: sortedBySkating,
+                         Skill.Shooting: sortedByShooting,
+                         Skill.Checking: sortedByChecking}
 
         while(workingSquads):
-            currentSquadIndex, currentSkill, _ = getSquadWithLowestSkill(workingSquads)
-            pick = sortedPlayers[currentSkill].pop()
+            curIndex, curSkill, _ = getSquadWithLowestSkill(workingSquads)
+            pick = sortedPlayers[curSkill].pop()
             for sortedList in sortedPlayers.values():
                 if pick in sortedList:
                     sortedList.remove(pick)
 
             playerList.players.remove(pick)
-            workingSquads[currentSquadIndex].players.append(pick)
-            if(len(workingSquads[currentSquadIndex].players) == squadSize):
-                squads.append(workingSquads.pop(currentSquadIndex))
+            workingSquads[curIndex].players.append(pick)
+            if(len(workingSquads[curIndex].players) == squadSize):
+                squads.append(workingSquads.pop(curIndex))
 
     return squads
 
@@ -176,7 +179,7 @@ def getSquadWithLowestSkill(squads):
     skill is currently the lowest.
     """
     minskating = min(range(len(squads)),
-                   key=lambda index: squads[index].skating)
+                     key=lambda index: squads[index].skating)
     minShoot = min(range(len(squads)),
                    key=lambda index: squads[index].shooting)
     minCheck = min(range(len(squads)),

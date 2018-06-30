@@ -70,7 +70,8 @@ class Player:
     @classmethod
     def fromJSON(cls, data):
         """Create a Player from JSON data containing player information."""
-        return cls(data["_id"], ' '.join([data["firstName"], data["lastName"]]),
+        return cls(data["_id"],
+                   ' '.join([data["firstName"], data["lastName"]]),
                    getSkillRatings(data))
 
 
@@ -90,16 +91,16 @@ class PlayerList:
     def sortedPlayers(self, sortSkill=None):
         """
         Return the list of players after sorting.
-        
+
         An optional skill can be passed, in which case the
         players are sorted by this skill. If no skill is passed,
         they are sorted by name.
         """
-        if(sortSkill == None):
-            return sorted(self.players, key=lambda x: x.name)
-        else:
+        if sortSkill:
             return sorted(self.players,
                           key=lambda x: x.skills[sortSkill])
+        else:
+            return sorted(self.players, key=lambda x: x.name)
 
     def updateTable(self):
         """Update the table of players."""
