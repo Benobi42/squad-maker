@@ -68,8 +68,8 @@ class TestGetBalancedSquads(TestCase):
         player4 = Player("404", "Nota RealPlayer", 20, 20, 20)
         playerList = PlayerList([player1, player2, player3, player4])
 
-        expectedSquads = [squads.Squad(1, [player1, player3]),
-                          squads.Squad(2, [player2, player4])]
+        expectedSquads = [squads.Squad(2, [player2, player3]),
+                          squads.Squad(1, [player1, player4])]
 
         balSquads = squads.getBalancedSquads(numSquads, playerList)
 

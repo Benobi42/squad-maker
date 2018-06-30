@@ -1,7 +1,16 @@
+from enum import Enum
+
 from players import Player, PlayerList, PlayerTable
 
 
 AVERAGENAME = 'Average'
+SQDKEY = "squad"
+
+
+class Skills(Enum):
+    skate = 1
+    shoot = 2
+    check = 3
 
 
 class Squad(PlayerList):
@@ -61,11 +70,12 @@ def getBalancedSquads(numSquads, playerList):
     """
     Dynamically generate closely-balanced squads of players from a given list
 
-    The List of available players is sorted in order of the sum of all of
-    their skills. After sorting, each squad in the desired number of squads
-    takes the next best player, until it has reached the maximum number of
-    players that it can have in order for the given list of players to be
-    split into the desired number of squads.
+    The list of players is sorted on each of the three rankings into a separate
+    list. During each iteration of the assignment loop, the current squad is
+    the one with the lowest summation of one of the skills, and the available
+    player with the highest skill in that category is added to the squad. Once
+    a squad has the maximum number of players needed to get the desired number
+    of squads from the player list, then no more players can be added.
 
     Errors if the number of desired squads is greater than the number of
     available players, or if number of desired squads is less than one.
@@ -93,31 +103,55 @@ def getBalancedSquads(numSquads, playerList):
     elif(numSquads == 1):
         newSquad = Squad(1, playerList.players)
         squads.append(newSquad)
-        newSquad.toHTML()
         playerList.players = []
     elif(numSquads == numPlayers):
         for i in range(numPlayers):
             newSquad = Squad(i+1, [playerList.players.pop()])
             squads.append(newSquad)
-            newSquad.toHTML()
     else:
         squadSize = numPlayers//numSquads
 
-        squadPlayers = [[] for i in range(numSquads)]
+        sqdsWithSkills = [{SQDKEY: Squad(i+1, []),
+                           Skills.skate: 0,
+                           Skills.shoot: 0,
+                           Skills.check: 0} for i in range(numSquads)]
 
-        tourney = sorted(playerList.players,
-                         key=(lambda x: sum([x.skate, x.shoot, x.check])))
+        sortedPlayers = {Skills.skate: sorted(playerList.players,
+                                              key=(lambda x: x.skate)),
+                         Skills.shoot: sorted(playerList.players,
+                                              key=(lambda x: x.shoot)),
+                         Skills.check: sorted(playerList.players,
+                                              key=(lambda x: x.check))}
 
-        for j in range(squadSize):
-            for squad in squadPlayers:
-                pick = tourney.pop()
-                squad.append(pick)
-                playerList.players.remove(pick)
+        while(sqdsWithSkills):
+            currentSquad, currentType, RES = getCurrentSquad(sqdsWithSkills)
+            pick = sortedPlayers[currentType].pop()
+            for key, sortedList in sortedPlayers.items():
+                if pick in sortedList:
+                    sortedList.remove(pick)
 
-        for i, squad in enumerate(squadPlayers):
-            newSquad = Squad(i+1, squad)
-            squads.append(newSquad)
-            newSquad.toHTML()
+            playerList.players.remove(pick)
+            sqdsWithSkills[currentSquad][SQDKEY].players.append(pick)
+            sqdsWithSkills[currentSquad][Skills.skate] += pick.skate
+            sqdsWithSkills[currentSquad][Skills.shoot] += pick.shoot
+            sqdsWithSkills[currentSquad][Skills.check] += pick.check
+            if(len(sqdsWithSkills[currentSquad][SQDKEY].players) == squadSize):
+                squads.append(sqdsWithSkills.pop(currentSquad)[SQDKEY])
 
-    playerList.toHTML()
     return squads
+
+
+def getCurrentSquad(sqdsWithSkills):
+    minSkate = min(range(len(sqdsWithSkills)),
+                   key=lambda index: sqdsWithSkills[index][Skills.skate])
+    minShoot = min(range(len(sqdsWithSkills)),
+                   key=lambda index: sqdsWithSkills[index][Skills.shoot])
+    minCheck = min(range(len(sqdsWithSkills)),
+                   key=lambda index: sqdsWithSkills[index][Skills.check])
+    return min([(minSkate, Skills.skate,
+                 sqdsWithSkills[minSkate][Skills.skate]),
+                (minShoot, Skills.shoot,
+                 sqdsWithSkills[minShoot][Skills.shoot]),
+                (minCheck, Skills.shoot,
+                 sqdsWithSkills[minCheck][Skills.check])],
+               key=lambda x: x[2])
