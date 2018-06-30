@@ -49,6 +49,8 @@ This can be safely ignored when checking style.
 
   Algorithm for squad balancing was based on the ideas presented [here](https://stackoverflow.com/a/1363503).
 
+  Hockey Puck icon downloaded from [pixabay](https://pixabay.com/en/puck-hockey-canada-sports-147986/)
+
   Special Thanks to [Eric Klinger](https://github.com/eklinger-UofA) and [Glen Nelson](https://github.com/gralamin) for performing code reviews.
 
 ## Original Challenge
