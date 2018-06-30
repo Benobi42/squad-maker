@@ -14,13 +14,50 @@ This implementation assumes that:
 
 ## Requirements
 
-  To run the webserver, only Docker is required. Docker can be installed using apt-get install docker.io.
+  To run the webserver, only Docker is required.
+
+  ```console
+  apt-get install docker.io
+  ```
 
   To run the application locally, python3 is required, and the requirements in the requirements.txt file should be installed with python3-pip
 
+  ```console
+  apt-get install python3 python-pip3
+  pip3 install -r requirements.txt
+  ```
+
+  To test locally, the requirements in the test/requirements.txt should also be installed.
+
+  ```console
+  pip3 install -r test/requirements.txt
+  ```
+
+## Building
+
+  To build the webserver container, call
+
+  ```console
+  make build -e DOCKERUSER={dockerusername}
+  ```
+
+  which will build the container under the name {dockerusername}/hockey_squad.
+
+  To build the container and push it to the docker registry, call
+
+  ```console
+  make publish -e DOCKERUSER={dockerusername}
+  ```
+
+  In order to publish the container to the [docker registry](https://hub.docker.com/), the DOCKERUSER should be a valid account.
+
 ## Running
 
-  Before running the webserver, please ensure the latest version of the container is loaded, using docker pull benobi42/hockey_squad:latest
+  Before running the webserver, please ensure the latest version of the container is loaded, using
+
+  ```console
+  docker pull benobi42/hockey_squad:latest
+  ```
 
   To run the webserver, call
 
@@ -30,24 +67,93 @@ This implementation assumes that:
 
   where OUTPORT is the desired port and/or ip address for the server to run on.
 
+  To run a locally built version, replace benobi42 with the DOCKERUSER value used during building.
+
+  ```console
+  docker run -p OUTPORT:5000 ${DOCKERUSER}/hockey_squad .
+  ```
+
   Once running, the webpage can be loaded in a browser by going to the specified address in OUTPORT. If OUTPORT is just a port number, the webpage can be found on that port on the localhost.
+
+  Example with ip address:
+
+  ```console
+  docker run -p 206.189.222.135:80:5000 benobi42/hockey_squad .
+  ```
+
+  Example with ports:
+
+  ```console
+  docker run -p 5000:5000 benobi42/hockey_squad .
+  ```
+
+  The webserver can also be run directly using python3 in the root project directory:
+
+  ```console
+  python3 ./app.py
+  ```
+
+  which starts a webserver on port 5000 of the localhost.
 
 ## Testing
 
 Testing can be run using make test in the root directory of the project
 
-Unittests can be run using pytest-3 in the root or testing directories
+```console
+make test
+```
+
+Unittests can also be run directly with docker
+
+```console
+docker run test_hockey_squad
+```
+
+Unittests can be also be run using pytest-3 in the root or testing directories
+
+```console
+pytest-3
+```
 
 Style checking is done through flake8
 
-* Currently, there is one warning with flake8 on python 3.7:
-  * *c:\users\bensc\appdata\local\programs\python\python37\lib\site-packages\pycodestyle.py:113: FutureWarning: Possible nested set at position 1 EXTRANEOUS_WHITESPACE_REGEX = re.compile(r'[[({] | []}),;:]')
+```console
+make pylint
+```
+
+or
+
+```console
+flake8
+```
+
+* As of June 30, 2018, there is one warning with flake8 with python 3.7:
+  * *python37\lib\site-packages\pycodestyle.py:113: FutureWarning: Possible nested set at position 1 EXTRANEOUS_WHITESPACE_REGEX = re.compile(r'[[({] | []}),;:]')
 
 This can be safely ignored when checking style.
 
-## Acknowledgements
+## Balancing Algorithm
 
   Algorithm for squad balancing was based on the ideas presented [here](https://stackoverflow.com/a/1363503).
+  
+  While there are still squads that need players, the squad with the lowest total of any skill is chosen, and it recieves the player with the highest value for that skill who has not been assigned to a squad already.
+
+  Testing on the provided players.json data has proven that this algorithm balances the squads fairly well for lower number of squads (2-6 were fully calculated).
+
+  The below table shows the statistics for 2-6 squads based on the provided players.json data. The Min column refers to the minimum total skill diffference between any two squads,
+  and the Max column refers to the maximum total skill difference between any two squads.
+
+  | numPlayers |  Min  |  Max  |
+  | -----------| :---: | :---: |
+  |      2     |   0   |   1   |
+  |      3     |   5   |   9   |
+  |      4     |   4   |  16   |
+  |      5     |   3   |  16   |
+  |      6     |   2   |  24   |
+
+  Further optimization could be done by rebalancing squads after the initial creation. However, this would increase the time complexity of the algorithm greatly, so that optimization was not done at this time.
+
+## Acknowledgements
 
   Hockey Puck icon downloaded from [pixabay](https://pixabay.com/en/puck-hockey-canada-sports-147986/)
 
