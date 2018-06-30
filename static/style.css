@@ -41,6 +41,9 @@ th{
 td:first-child, th:first-child{
     border-left: none;
 }
+.avgRow{
+    background-color: darkgoldenrod
+}
 .button{
     font-family: Arial, Helvetica, sans-serif;
     padding: 10px;
@@ -50,6 +53,20 @@ td:first-child, th:first-child{
     border-radius: 8px;
     background-color: darkgoldenrod;
     font-size: 15px;
+}
+.errorText{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 30px;
+    color: orangered;
+    text-shadow:    -1px -1px 0 black,
+                    1px -1px 0 black,
+                    -1px 1px 0 black,
+                    1px 1px 0 black,
+                    -2px 0 0 black,
+                    2px 0 0 black,
+                    0 2px 0 black,
+                    0 -2px 0 black;
+    padding: 20px;
 }
 .numText{
     font-family: Arial, Helvetica, sans-serif;
@@ -62,7 +79,22 @@ td:first-child, th:first-child{
     border-radius: 4px;
 }
 .playerRow:nth-child(even) {
-    background-color: slategray
+    background-color: slategray;
+}
+.squadText{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 30px;
+    padding-top: 10px;
+    color: dodgerblue;
+    text-shadow:    -1px -1px 0 black,
+                    1px -1px 0 black,
+                    -1px 1px 0 black,
+                    1px 1px 0 black,
+                    -2px 0 0 black,
+                    2px 0 0 black,
+                    0 2px 0 black,
+                    0 -2px 0 black;
+    padding-bottom: 5px;
 }
 .text{
     font-family: Arial, Helvetica, sans-serif;

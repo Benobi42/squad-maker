@@ -7,15 +7,20 @@
     </head>
  
     <body>
+        {% if errorPopup %}
+            <div class=errorText>
+                Error Encountered During Squad Generation:<br>
+                {{ errorPopup|safe }}
+            </div>
+        {% endif %}
         <div class=titleText><b>Hockey Squad Builder</b></div>
         <div class=text>Generate a set of squads from a list of available players.</div><br>
         <div class=text>
             Instructions<br>
             Enter the number of desired squads below, and click the Generate Squads Button<br>
             To clear the current list of squads, press Reset Squads.
-        </div><br>
 
-        <form class=text>
+        <form class=text action="/squads" method="POST">
             <b style="font-size:20px;">Number of Squads:</b>
             <input type="number" name=numSquads onfocus="this.value=''"
              oninvalid="alert('Number of Squads must be greater than zero and lower than the number of available players')"
@@ -34,6 +39,14 @@
             {% else %}
                 <div class=text><b>No Waiting List Found</b></div>
             {% endif %}
+        </div>
+        {% if squads %}
+            <div>
+                {% for squad in squads %}
+                    <div class=squadText><b>Squad {{loop.index}}</b></div>
+                    {{ squad|safe }}
+                {% endfor %}
             </div>
+        {% endif %}
     </body>
 </html>
